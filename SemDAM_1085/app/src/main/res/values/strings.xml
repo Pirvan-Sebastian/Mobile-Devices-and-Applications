@@ -12,4 +12,8 @@
     <string name="alege_facultatea">Alege facultatea:</string>
     <string name="are_bursa">Are bursa?</string>
     <string name="adauga_student">Adauga student</string>
+    <string name="activitate_bnr">Activitate BNR</string>
+    <string name="extragere_xml">Extragere XML</string>
+    <string name="extragere_date_json">Extragere date JSON</string>
+    <string name="salvare_bd">Salvare BD</string>
 </resources>
