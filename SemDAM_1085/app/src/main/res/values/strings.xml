@@ -13,7 +13,7 @@
     <string name="are_bursa">Are bursa?</string>
     <string name="adauga_student">Adauga student</string>
     <string name="activitate_bnr">Activitate BNR</string>
-    <string name="extragere_xml">Extragere XML</string>
-    <string name="extragere_date_json">Extragere date JSON</string>
-    <string name="salvare_bd">Salvare BD</string>
+    <string name="extrage_date_din_xml">Extrage date din XML</string>
+    <string name="extrage_date_din_json">Extrage date din JSON</string>
+    <string name="salvare_in_bd">Salvare in BD</string>
 </resources>

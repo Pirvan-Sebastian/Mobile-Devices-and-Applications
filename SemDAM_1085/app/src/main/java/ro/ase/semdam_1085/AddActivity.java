@@ -2,6 +2,7 @@ package ro.ase.semdam_1085;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -9,6 +10,13 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.Toast;
+
+import java.net.SocketImpl;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,14 +24,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
 public class AddActivity extends AppCompatActivity {
 
-    public static final String ADD_STUDENT = "AddStudent";
+    public static final String ADD_STUDENT = "addStudent";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,27 +53,21 @@ public class AddActivity extends AppCompatActivity {
         EditText etMedie = findViewById(R.id.editTextMedie);
         RadioGroup radioGroup = findViewById(R.id.radioGroup);
 
-
-        //daca hasextra prezinta codul de edit
         if(intent.hasExtra(MainActivity.EDIT_STUDENT))
         {
-            //atuncideserializez studentul(unpack la  date)
             Student student = (Student) intent.getSerializableExtra(MainActivity.EDIT_STUDENT);
-            //punin etichete datele din obiectul student primit din listView ca sa il editez
             etNume.setText(student.getNume());
             etDataNasterii.setText(new SimpleDateFormat("MM/dd/yyyy",
                     Locale.US).format(student.getDataNasterii()));
             etMedie.setText(String.valueOf(student.getMedie()));
             ArrayAdapter<String> adapter1 = (ArrayAdapter<String>) spinnerFacultati.getAdapter();
-
             for(int i=0;i<adapter1.getCount();i++)
-            {
-                if(adapter1.getItem(i).equals(student.getFacultate())) {
+                if(adapter1.getItem(i).equals(student.getFacultate()))
+                {
                     spinnerFacultati.setSelection(i);
                     break;
                 }
-            }
-            if(student.isAreBursa())
+            if(student.isAreBursa()==true)
                 radioGroup.check(R.id.radioButtonDA);
             else
                 radioGroup.check(R.id.radioButtonNU);
@@ -78,47 +75,53 @@ public class AddActivity extends AppCompatActivity {
 
 
         Button btnAdauga = findViewById(R.id.btnAdd);
-        btnAdauga.setOnClickListener(new View.OnClickListener()
-        {
+        btnAdauga.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
-               if(etNume.getText().toString().isEmpty())
-                   etNume.setError("Introduceti numele!");
-               else
-                   if(etDataNasterii.getText().toString().isEmpty())
-                       etDataNasterii.setError("Introduceti Data NAsterii");
-                   else
-                    if(etMedie.getText().toString().isEmpty())
-                       etMedie.setError("Introduceti Medie");
+            public void onClick(View view) {
+                if(etNume.getText().toString().isEmpty())
+                    etNume.setError("Introduceti numele!");
+                else
+                    if(etDataNasterii.getText().toString().isEmpty())
+                        etDataNasterii.setError("Introduceti data nasterii!");
                     else
-                    {
-                        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/YYYY", Locale.US);
-                        try {
-                            sdf.parse(etDataNasterii.getText().toString());
+                        if (etMedie.getText().toString().isEmpty())
+                            etMedie.setError("Introduceti media!");
+                        else
+                        {
+                            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
+                            try {
+                                sdf.parse(etDataNasterii.getText().toString());
+                                Date dataNasterii = new Date(etDataNasterii.getText().toString());
+                                String numeStudent = etNume.getText().toString();
+                                float medie = Float.parseFloat(etMedie.getText().toString());
+                                String facultate = spinnerFacultati.getSelectedItem().toString();
+                                RadioButton radioButton = findViewById(radioGroup.getCheckedRadioButtonId());
+                                boolean areBursa = false;
+                                if(radioButton.getText().toString().equals("DA"))
+                                    areBursa = true;
 
-                            Date dataNasterii = new Date(etDataNasterii.getText().toString());
-                            String numeStudent = etNume.getText().toString();
-                            float medie = Float.parseFloat(etMedie.getText().toString());
-                            String facultate = spinnerFacultati.getSelectedItem().toString();
-                            RadioButton radioButton = findViewById(radioGroup.getCheckedRadioButtonId());
-                            boolean areBursa = false;
-                            if(radioButton.getText().toString().equals("DA"))
-                                areBursa=true;
-                            Student student = new Student(numeStudent,dataNasterii,medie,facultate,areBursa);
-                            intent.putExtra(ADD_STUDENT,student);
-                            setResult(RESULT_OK,intent);
-                            finish();
+                                Student student = new Student(numeStudent, dataNasterii, medie, facultate, areBursa);
+                                /*Toast.makeText(getApplicationContext(), student.toString(),
+                                        Toast.LENGTH_LONG).show();*/
+                                /*intent.putExtra(ADD_STUDENT, student);
+                                setResult(RESULT_OK, intent);
+                                finish();*/
+                                Intent intent1 = new Intent(getApplicationContext(), AfisareActivity.class);
+                                intent1.putExtra(ADD_STUDENT, student);
+                                startActivity(intent1);
 
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
+                            } catch (ParseException e) {
+                                throw new RuntimeException(e);
+                            }
+                            catch (Exception e)
+                            {
+                                Log.e("AddActivity", e.getMessage().toString());
+                                Toast.makeText(getApplicationContext(),
+                                        e.getMessage(), Toast.LENGTH_LONG).show();
+                            }
                         }
-                    }
-
             }
         });
-
-
 
     }
 }

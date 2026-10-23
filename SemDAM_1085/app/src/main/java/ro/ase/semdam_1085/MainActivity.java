@@ -9,6 +9,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -19,24 +25,19 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity {
 
     public ListView listView;
 
-    List<Student> listaStudenti = new ArrayList<>();
+    List<Student> listaStud = new ArrayList<>();
 
     public static final int REQUEST_CODE_ADD = 100;
+
     public static final int REQUEST_CODE_EDIT = 200;
 
-    public static final String EDIT_STUDENT = "EditStudent";
-    //psfs -- face fix ce e deasupra
+    public static final String EDIT_STUDENT = "editStudent";
+
     public int poz;
-    //pozitia pe care editez ca sa stiu unde suprascriu in listview cand ma intorc din add activity in main activity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
-
         });
 
         listView = findViewById(R.id.listView);
@@ -55,8 +55,9 @@ public class MainActivity extends AppCompatActivity {
         FloatingActionButton floatingActionButton = findViewById(R.id.floatingActionButton);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), AddActivity.class);
+                //startActivity(intent);
                 startActivityForResult(intent, REQUEST_CODE_ADD);
             }
         });
@@ -64,99 +65,115 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Student student = listaStudenti.get(position);
 
-                ArrayAdapter<Student> adapter = (ArrayAdapter<Student>) listView.getAdapter();
-                AlertDialog dialog = new AlertDialog.Builder(MainActivity.this).setTitle("Confirmare stergere").setMessage("Esti sigur ca vrei sa stergi studentul?")
+                Student student = listaStud.get(position);
+
+                ArrayAdapter adapter = (ArrayAdapter) listView.getAdapter();
+
+                AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("Confirmare stergere")
+                        .setMessage("Doriti sa stergeti?")
                         .setNegativeButton("NU", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 dialogInterface.cancel();
                             }
-                        }).setPositiveButton("DA", new DialogInterface.OnClickListener() {
+                        })
+                        .setPositiveButton("DA", new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                listaStudenti.remove(student);
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                listaStud.remove(student);
                                 adapter.notifyDataSetChanged();
-                                dialog.cancel();
+                                dialogInterface.cancel();
                             }
-                        }).create();
+                        })
+                        .create();
 
                 dialog.show();
-                return true;
 
+                return true;
             }
         });
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Student student = listaStudenti.get(position);
-                poz = position; // salvam pozitia pentru onActivityResult
-                Intent intent = new Intent(getApplicationContext(),AddActivity.class);
-                intent.putExtra(EDIT_STUDENT,student); // folosim EDIT_STUDENT în loc de AddActivity.ADD_STUDENT
-                startActivityForResult(intent,REQUEST_CODE_EDIT);
+                poz = position;
+                Intent intent = new Intent(getApplicationContext(), AddActivity.class);
+                intent.putExtra(EDIT_STUDENT, listaStud.get(position));
+                startActivityForResult(intent, REQUEST_CODE_EDIT);
             }
         });
-        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == REQUEST_CODE_ADD && resultCode == RESULT_OK&& data!=null)
+        if(requestCode==REQUEST_CODE_ADD && resultCode==RESULT_OK&& data!=null)
         {
-            Student student= (Student) data.getSerializableExtra(AddActivity.ADD_STUDENT);
+            Student student = (Student) data.getSerializableExtra(AddActivity.ADD_STUDENT);
             if(student!=null)
             {
-                listaStudenti.add(student);
-                ArrayAdapter<Student> adapter = new ArrayAdapter<>(getApplicationContext(),android.R.layout.simple_list_item_1,listaStudenti);
+                listaStud.add(student);
+                /*Toast.makeText(getApplicationContext(), student.toString(),
+                        Toast.LENGTH_LONG).show();*/
+                ArrayAdapter<Student> adapter = new ArrayAdapter<>(getApplicationContext(),
+                        android.R.layout.simple_list_item_1, listaStud);
                 listView.setAdapter(adapter);
             }
         }
-        else if(requestCode == REQUEST_CODE_EDIT && resultCode == RESULT_OK && data!=null)
+        else
+        if(requestCode==REQUEST_CODE_EDIT && resultCode==RESULT_OK&& data!=null)
         {
-            Student student= (Student) data.getSerializableExtra(AddActivity.ADD_STUDENT);
+            Student student = (Student) data.getSerializableExtra(AddActivity.ADD_STUDENT);
             if(student!=null)
             {
-                listaStudenti.get(poz).setNume(student.getNume());
-                listaStudenti.get(poz).setMedie(student.getMedie());
-                listaStudenti.get(poz).setFacultate(student.getFacultate());
-                listaStudenti.get(poz).setAreBursa(student.isAreBursa());
-                listaStudenti.get(poz).setDataNasterii(student.getDataNasterii());
+                listaStud.get(poz).setNume(student.getNume());
+                listaStud.get(poz).setDataNasterii(student.getDataNasterii());
+                listaStud.get(poz).setMedie(student.getMedie());
+                listaStud.get(poz).setFacultate(student.getFacultate());
+                listaStud.get(poz).setAreBursa(student.isAreBursa());
 
                 ArrayAdapter<Student> adapter = (ArrayAdapter<Student>) listView.getAdapter();
                 adapter.notifyDataSetChanged();
             }
         }
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         getMenuInflater().inflate(R.menu.meniu_principal, menu);
+
         return true;
     }
-//ce se intampla cand apas pe ce buton!!
+
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem optiunieMeniu) {
-        if(optiunieMeniu.getItemId() == R.id.optiune1)
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        if(item.getItemId()==R.id.optiune1)
         {
-            Intent intent = new Intent(getApplicationContext(),BNRActivity.class);
+            Intent intent = new Intent(this, BNRActivity.class);
             startActivity(intent);
 
             return true;
         }
-        else if(optiunieMeniu.getItemId()==R.id.optiune2)
+        else if(item.getItemId()==R.id.optiune2)
         {
             //TO DO
             return true;
         }
-        else if(optiunieMeniu.getItemId()==R.id.optiune3)
+        else if(item.getItemId()==R.id.optiune3)
         {
             //TO DO
             return true;
         }
-        else if(optiunieMeniu.getItemId()==R.id.optiune4)
+        else if(item.getItemId()==R.id.optiune4)
         {
             //TO DO
             return true;
         }
+
         return false;
     }
 }

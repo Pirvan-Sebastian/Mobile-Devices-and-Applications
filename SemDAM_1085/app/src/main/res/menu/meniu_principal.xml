@@ -4,11 +4,14 @@
 
     <item android:id="@+id/optiune1"
         android:title="@string/activitate_bnr" />
+
     <item android:id="@+id/optiune2"
-        android:title="@string/extragere_xml" />
+        android:title="@string/extrage_date_din_xml" />
+
     <item android:id="@+id/optiune3"
-        android:title="@string/extragere_date_json" />
+        android:title="@string/extrage_date_din_json" />
+
     <item android:id="@+id/optiune4"
-        android:title="@string/salvare_bd" />
+        android:title="@string/salvare_in_bd" />
 
 </menu>
