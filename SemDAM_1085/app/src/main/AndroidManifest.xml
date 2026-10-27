@@ -28,9 +28,13 @@
         <activity
             android:name=".AddActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustResize"></activity>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".AfisareActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".AfisareCurs"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
     </application>

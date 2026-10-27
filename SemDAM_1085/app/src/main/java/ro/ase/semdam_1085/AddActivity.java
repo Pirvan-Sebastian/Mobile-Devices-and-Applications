@@ -103,12 +103,16 @@ public class AddActivity extends AppCompatActivity {
                                 Student student = new Student(numeStudent, dataNasterii, medie, facultate, areBursa);
                                 /*Toast.makeText(getApplicationContext(), student.toString(),
                                         Toast.LENGTH_LONG).show();*/
-                                /*intent.putExtra(ADD_STUDENT, student);
+
+                                //asta in main
+                                intent.putExtra(ADD_STUDENT, student);
                                 setResult(RESULT_OK, intent);
-                                finish();*/
-                                Intent intent1 = new Intent(getApplicationContext(), AfisareActivity.class);
-                                intent1.putExtra(ADD_STUDENT, student);
-                                startActivity(intent1);
+                                finish();
+
+                                //asta deschide in AfisareActivity
+//                                Intent intent1 = new Intent(getApplicationContext(), AfisareActivity.class);
+//                                intent1.putExtra(ADD_STUDENT, student);
+//                                startActivity(intent1);
 
                             } catch (ParseException e) {
                                 throw new RuntimeException(e);

@@ -2,13 +2,16 @@ package ro.ase.semdam_1085;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -68,7 +71,8 @@ public class MainActivity extends AppCompatActivity {
 
                 Student student = listaStud.get(position);
 
-                ArrayAdapter adapter = (ArrayAdapter) listView.getAdapter();
+//                ArrayAdapter adapter = (ArrayAdapter) listView.getAdapter();
+                CustomAdapter adapter = (CustomAdapter) listView.getAdapter();
 
                 AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
                         .setTitle("Confirmare stergere")
@@ -117,8 +121,31 @@ public class MainActivity extends AppCompatActivity {
                 listaStud.add(student);
                 /*Toast.makeText(getApplicationContext(), student.toString(),
                         Toast.LENGTH_LONG).show();*/
-                ArrayAdapter<Student> adapter = new ArrayAdapter<>(getApplicationContext(),
-                        android.R.layout.simple_list_item_1, listaStud);
+//                ArrayAdapter<Student> adapter = new ArrayAdapter<>(getApplicationContext(),
+//                        android.R.layout.simple_list_item_1, listaStud);
+
+                CustomAdapter adapter = new CustomAdapter(getApplicationContext(),
+                        R.layout.elem_listview, listaStud, getLayoutInflater()){
+
+                    @NonNull
+                    @Override
+                    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                        View view = super.getView(position, convertView, parent);
+
+                        Student student1 = listaStud.get(position);
+
+                        TextView tvMedie = view.findViewById(R.id.tvMedie);
+
+                        if(student1.getMedie()>=5)
+                            tvMedie.setTextColor(Color.GREEN);
+                        else
+                            tvMedie.setTextColor(Color.RED);
+
+                        return view;
+                    }
+                };
+//                cu {}; amintrat in clasa CustomAdapter si scriu cod pt in clasa
+
                 listView.setAdapter(adapter);
             }
         }
@@ -134,7 +161,9 @@ public class MainActivity extends AppCompatActivity {
                 listaStud.get(poz).setFacultate(student.getFacultate());
                 listaStud.get(poz).setAreBursa(student.isAreBursa());
 
-                ArrayAdapter<Student> adapter = (ArrayAdapter<Student>) listView.getAdapter();
+//                ArrayAdapter<Student> adapter = (ArrayAdapter<Student>) listView.getAdapter();
+
+                CustomAdapter adapter = (CustomAdapter) listView.getAdapter();
                 adapter.notifyDataSetChanged();
             }
         }
