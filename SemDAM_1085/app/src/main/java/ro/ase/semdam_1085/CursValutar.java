@@ -10,6 +10,9 @@ public class CursValutar implements Serializable {
     private String cursGbp;
     private String cursXau;
 
+    public CursValutar() {
+    }
+
     public CursValutar(String dataCurs, String cursEur, String cursUsd, String cursGbp, String cursXau) {
         this.dataCurs = dataCurs;
         this.cursEur = cursEur;
@@ -68,4 +71,5 @@ public class CursValutar implements Serializable {
                 ", cursXau='" + cursXau + '\'' +
                 '}';
     }
+
 }
